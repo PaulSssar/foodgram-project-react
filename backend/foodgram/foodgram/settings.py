@@ -26,10 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'recipes.apps.RecipesConfig',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'django_filters',
     'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
     'api.apps.ApiConfig',
-    'rest_framework'
     ]
 
 MIDDLEWARE = [
@@ -107,17 +110,45 @@ USE_L10N = True
 USE_TZ = True
 
 
+AUTH_USER_MODEL = 'users.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
+}
+
+
 STATIC_URL = 'static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+DJOSER = {
+    'HIDE_USERS': False,
+
+    'SERIALIZERS': {
+        'user': 'api.serializers.MyUserSerializer',
+        'current_user': 'api.serializers.MyUserSerializer',
+    },
+
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user_delete': ['rest_framework.permissions.IsAdminUser'],
+        'set_username': ['rest_framework.permissions.IsAdminUser'],
+    },
+}

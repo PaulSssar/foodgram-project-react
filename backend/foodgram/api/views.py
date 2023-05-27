@@ -8,6 +8,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from users.models import User
 
 from .filters import NameSearchFilter, RecipeFilter
@@ -72,57 +73,49 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(detail=True,
-            methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated])
-    def favorite(self, request, pk=None):
-        user = self.request.user
+    def add_recipe(self, model, request, pk):
         recipe = get_object_or_404(Recipes, pk=pk)
+        user = self.request.user
+        if model.objects.filter(recipe=recipe, user=user).exists():
+            return Response({'errors': 'Рецепт уже добавлен'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        model.objects.create(recipe=recipe, user=user)
+        serializer = ShortRecipeSerializer(recipe, context={'request': request})
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-        if self.request.method == 'POST':
-            if IsFavorite.objects.filter(user=user, recipe=recipe).exists():
-                return Response({'errors': 'Рецепт уже добавлен'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            IsFavorite.objects.create(user=user, recipe=recipe)
-            serializer = ShortRecipeSerializer(
-                recipe, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        if self.request.method == 'DELETE':
-            if not IsFavorite.objects.filter(user=user, recipe=recipe).exists():
-                return Response({'errors': 'Рецепта отсутствует избранном'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            favorite = get_object_or_404(IsFavorite, user=user, recipe=recipe)
-            favorite.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    def del_recipe(self, model, request, pk):
+        recipe = get_object_or_404(Recipes, pk=pk)
+        user = self.request.user
+        if not model.objects.filter(user=user, recipe=recipe).exists():
+            return Response({'errors': 'Рецепт отсутствует'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        obj = get_object_or_404(model, recipe=recipe, user=user)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True,
-            methods=['post', 'delete'],
+            methods=['post',],
             permission_classes=[IsAuthenticated])
-    def shopping_cart(self, request, pk=None):
-        user = self.request.user
-        recipe = get_object_or_404(Recipes, pk=pk)
+    def add_favorite(self, request, pk):
+        return self.add_recipe(IsFavorite, request, pk)
 
-        if self.request.method == 'POST':
-            if IsInShoppingCartModel.objects.filter(user=user, recipe=recipe).exists():
-                return Response({'errors': 'Рецепт уже добавлен'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            IsInShoppingCartModel.objects.create(user=user, recipe=recipe)
-            serializer = ShortRecipeSerializer(
-                recipe, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    @action(detail=True,
+            methods=['delete',],
+            permission_classes=[IsAuthenticated])
+    def del_favorite(self, request, pk=None):
+        return self.del_recipe(IsFavorite, request, pk)
 
-        if self.request.method == 'DELETE':
-            if not IsInShoppingCartModel.objects.filter(user=user,
-                                               recipe=recipe).exists():
-                return Response({'errors': 'Рецепт отсутствует'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            shopping_cart = get_object_or_404(
-                IsInShoppingCartModel, user=user, recipe=recipe)
-            shopping_cart.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    @action(detail=True,
+            methods=['post',],
+            permission_classes=[IsAuthenticated])
+    def add_shopping_cart(self, request, pk=None):
+        return self.add_recipe(IsInShoppingCartModel, request, pk)
+
+    @action(detail=True,
+            methods=['delete',],
+            permission_classes=[IsAuthenticated])
+    def del_shopping_cart(self, request, pk=None):
+        return self.del_recipe(IsInShoppingCartModel, request, pk)
 
     @action(detail=False,
             methods=['get'],

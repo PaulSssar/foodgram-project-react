@@ -1,6 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -10,17 +10,17 @@ class Ingredient(models.Model):
         'Название ингридиента',
         max_length=200
     )
-    measure = models.CharField(
+    measurement_unit = models.CharField(
         'Единица измерения',
         max_length=200
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
+
+    def __str__(self):
+        return self.name
 
 
 class Tags(models.Model):
@@ -38,12 +38,12 @@ class Tags(models.Model):
         max_length=200
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipes(models.Model):
@@ -87,12 +87,12 @@ class Recipes(models.Model):
         ]
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
 
 
 class AmountIngredients(models.Model):
@@ -112,9 +112,6 @@ class AmountIngredients(models.Model):
         'Количество ингридиента'
     )
 
-    def __str__(self):
-        return f'рецепт:{self.recipe} ингредиент:{self.ingredient}'
-
     class Meta:
         verbose_name = 'Количество ингридиентов'
         verbose_name_plural = 'Количество ингридиентов'
@@ -124,6 +121,9 @@ class AmountIngredients(models.Model):
                 name='unique_ingredient_in_recipe'
             )
         ]
+
+    def __str__(self):
+        return f'рецепт:{self.recipe} ингредиент:{self.ingredient}'
 
 
 class IsInShoppingCartModel(models.Model):
@@ -140,9 +140,6 @@ class IsInShoppingCartModel(models.Model):
         related_name='shopping_cart'
     )
 
-    def __str__(self):
-        return f'Рецепт {self.recipe} в покупках или нет у {self.user}'
-
     class Meta:
         verbose_name = 'Рецепт в покупках'
         verbose_name_plural = 'Рецепты в покупках'
@@ -152,6 +149,9 @@ class IsInShoppingCartModel(models.Model):
                 name='unique_is_in_shopping_cart'
             )
         ]
+
+    def __str__(self):
+        return f'Рецепт {self.recipe} в покупках или нет у {self.user}'
 
 
 class IsFavorite(models.Model):
@@ -168,9 +168,6 @@ class IsFavorite(models.Model):
         related_name='favorite'
     )
 
-    def __str__(self):
-        return f'Рецепт {self.recipe} в избрангом или нет у {self.user}'
-
     class Meta:
         verbose_name = 'Рецепт в избранном'
         verbose_name_plural = 'Рецепты в избранном'
@@ -181,3 +178,5 @@ class IsFavorite(models.Model):
             )
         ]
 
+    def __str__(self):
+        return f'Рецепт {self.recipe} в избрангом или нет у {self.user}'
