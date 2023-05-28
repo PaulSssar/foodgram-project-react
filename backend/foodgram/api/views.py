@@ -52,27 +52,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipes.objects.all()
-    serializer_class = RecipeSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipeFilter
-    http_method_names = [
-        m for m in viewsets.ModelViewSet.http_method_names if m not in ['put']
-    ]
-
-    def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
-            return RecipeReadSerializer
-        return RecipeSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
-
+class AddAndDeleteRecipeView(APIView):
     def add_recipe(self, model, request, pk):
         recipe = get_object_or_404(Recipes, pk=pk)
         user = self.request.user
@@ -93,26 +73,49 @@ class RecipeViewSet(viewsets.ModelViewSet):
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class RecipeViewSet(viewsets.ModelViewSet,
+                    AddAndDeleteRecipeView):
+    queryset = Recipes.objects.all()
+    serializer_class = RecipeSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
+    http_method_names = [
+        m for m in viewsets.ModelViewSet.http_method_names if m not in ['put']
+    ]
+
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS:
+            return RecipeReadSerializer
+        return RecipeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
+
     @action(detail=True,
-            methods=['post',],
+            methods=['post', ],
             permission_classes=[IsAuthenticated])
     def add_favorite(self, request, pk):
         return self.add_recipe(IsFavorite, request, pk)
 
     @action(detail=True,
-            methods=['delete',],
+            methods=['delete', ],
             permission_classes=[IsAuthenticated])
     def del_favorite(self, request, pk=None):
         return self.del_recipe(IsFavorite, request, pk)
 
     @action(detail=True,
-            methods=['post',],
+            methods=['post', ],
             permission_classes=[IsAuthenticated])
     def add_shopping_cart(self, request, pk=None):
         return self.add_recipe(IsInShoppingCartModel, request, pk)
 
     @action(detail=True,
-            methods=['delete',],
+            methods=['delete', ],
             permission_classes=[IsAuthenticated])
     def del_shopping_cart(self, request, pk=None):
         return self.del_recipe(IsInShoppingCartModel, request, pk)

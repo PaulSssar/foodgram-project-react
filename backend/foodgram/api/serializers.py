@@ -100,24 +100,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    is_in_shopping_cart = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
-    image = Base64ImageField()
-
-    class Meta:
-        model = Recipes
-        fields = ('__all__')
-
-    def get_is_in_shopping_cart(self, obj):
-        return IsInShoppingCartModel.objects.filter(
-            recipe=obj, user=self.context.get('request').user
-        ).exists()
-
-    def get_is_favorited(self, obj):
-        return IsFavorite.objects.filter(
-            recipe=obj, user=self.context.get('request').user
-        ).exists()
-
     tags = serializers.PrimaryKeyRelatedField(queryset=Tags.objects.all(),
                                               many=True)
     author = MyUserSerializer(read_only=True)
@@ -137,16 +119,15 @@ class RecipeSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         if not value:
             raise ValidationError('Добавьте ингридиент.')
-        for i in value:
-            if i['amount'] <= 0:
+        for amount_ingridient in value:
+            if amount_ingridient['amount'] <= 0:
                 raise ValidationError('Колличество должно быть больше 0')
         return value
 
     def to_representation(self, instance):
         request = self.context.get('request')
-        context = {'request': request}
         return RecipeReadSerializer(instance,
-                                    context=context).data
+                                    context={'request': request}).data
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
