@@ -6,7 +6,6 @@ from django.core.management.utils import get_random_secret_key
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -14,10 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", default=True)
+DEBUG = os.getenv("DEBUG", default=False)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -35,7 +33,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
     'api.apps.ApiConfig',
-    ]
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -67,20 +65,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv("DB_ENGINE", default="django.db.backends.postgresql"),
+        'NAME': os.getenv("DB_NAME", default="postgres"),
+        'USER': os.getenv("POSTGRES_USER", default="postgres"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD", default="password"),
+        'HOST': os.getenv("DB_HOST", default="db"),
+        'PORT': os.getenv("DB_PORT", default="5432")
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -97,7 +91,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -110,7 +103,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -125,19 +117,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 }
 
+STATIC_URL = '/static/'
 
-STATIC_URL = 'static/'
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 DJOSER = {
     'HIDE_USERS': False,
