@@ -9,5 +9,3 @@ admin.site.register(Recipes)
 admin.site.register(Tags)
 admin.site.register(IsInShoppingCartModel)
 admin.site.register(IsFavorite)
-
-
