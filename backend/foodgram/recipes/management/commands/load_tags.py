@@ -1,7 +1,6 @@
 import csv
 
 from django.core.management.base import BaseCommand
-
 from recipes.models import Tags
 
 
@@ -24,4 +23,4 @@ class Command(BaseCommand):
                     tags.append(create_tags)
                 except ValueError:
                     print('Неверные данные')
-            Tag.objects.bulk_create(tags)
+            Tags.objects.bulk_create(tags)
