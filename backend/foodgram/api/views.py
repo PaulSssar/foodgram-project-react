@@ -13,10 +13,10 @@ from users.models import User
 
 from .filters import NameSearchFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (FollowSerializer,
-                          IngredientSerializer, MyUserSerializer,
-                          RecipeReadSerializer, RecipeSerializer,
-                          ShortRecipeSerializer, TagsSerializer)
+from .serializers import (FollowSerializer, IngredientSerializer,
+                          MyUserSerializer, RecipeReadSerializer,
+                          RecipeSerializer, ShortRecipeSerializer,
+                          TagsSerializer)
 
 
 class MyUserViewSet(views.UserViewSet):
@@ -60,7 +60,10 @@ class AddAndDeleteRecipeView(APIView):
             return Response({'errors': 'Рецепт уже добавлен'},
                             status=status.HTTP_400_BAD_REQUEST)
         model.objects.create(recipe=recipe, user=user)
-        serializer = ShortRecipeSerializer(recipe, context={'request': request})
+        serializer = ShortRecipeSerializer(
+            recipe,
+            context={'request': request}
+        )
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     def del_recipe(self, model, request, pk):
