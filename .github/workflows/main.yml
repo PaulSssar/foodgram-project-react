@@ -42,7 +42,7 @@ jobs:
         with:
           push: true
           file: backend/Dockerfile
-          tags: ${{ secrets.MY_USERNAME_DOCKER }}/backend:latest
+          tags: ${{ secrets.MY_USERNAME_DOCKER }}/foodgram:latest
           
   deploy:
     if: github.ref == 'refs/heads/master'
