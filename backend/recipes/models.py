@@ -68,7 +68,7 @@ class Recipes(models.Model):
         Ingredient,
         verbose_name='Ингредиенты блюда',
         related_name='recipe',
-        through='recipes.AmountIngredients',
+        through='AmountIngredients',
     )
     tags = models.ForeignKey(
         Tags,
