@@ -75,12 +75,10 @@ class Recipes(models.Model):
         blank=True,
         null=True,
     )
-    tags = models.ForeignKey(
+    tags = models.ManyToManyField(
         Tags,
         verbose_name='Тег',
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='recipe'
+        related_name='recipes'
     )
     cooking_time = models.IntegerField(
         'Время приготовления',
