@@ -138,7 +138,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredient')
+        ingredients = validated_data.pop('ingredients')
         recipe = Recipes.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
