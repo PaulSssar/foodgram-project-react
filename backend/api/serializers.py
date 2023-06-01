@@ -40,19 +40,19 @@ class FollowSerializer(MyUserSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class AmountIngredientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = AmountIngredients
-        fields = '__all__'
+        fields = ('id', 'amount', 'name', 'measurement_unit')
 
 
 class TagsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tags
-        fields = '__all__'
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientInRecipeCreateSerializer(serializers.ModelSerializer):
@@ -138,7 +138,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('ingredient')
         recipe = Recipes.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
