@@ -72,7 +72,8 @@ class Recipes(models.Model):
         verbose_name='Ингредиенты блюда',
         related_name='recipe',
         through='AmountIngredients',
-        blank=True
+        blank=True,
+        null=True,
     )
     tags = models.ForeignKey(
         Tags,
