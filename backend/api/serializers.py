@@ -1,4 +1,3 @@
-from django.db.models import F
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (AmountIngredients, Ingredient, IsFavorite,
                             IsInShoppingCartModel, Recipes, Tags)
@@ -74,7 +73,8 @@ class IngredientInRecipeCreateSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagsSerializer(read_only=True)
     author = MyUserSerializer(read_only=True)
-    ingredients = serializers.SerializerMethodField()
+    ingredients = IngredientInRecipeCreateSerializer(
+        source='recipeingredients', many=True)
     image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
@@ -84,16 +84,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart', 'name',
                   'image', 'description', 'cooking_time')
-
-    def get_ingredients(self, obj):
-        recipe = obj
-        return ingredients = recipe.ingredients.values(
-            'id',
-            'name',
-            'measurement_unit',
-            amount=F('ingredientinrecipe__amount')
-        )
-
 
     def get_is_favorited(self, obj):
         user = self.context['request'].user
