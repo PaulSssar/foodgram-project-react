@@ -109,8 +109,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tags.objects.all(),
-        many=True)
+        queryset=Tags.objects.all())
     author = MyUserSerializer(read_only=True)
     ingredients = AmountIngredientsSerializer(many=True)
     image = Base64ImageField()
@@ -125,13 +124,13 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise ValidationError('Добавьте тег.')
         return value
 
-    # def validate_ingredients(self, value):
-    #     if not value:
-    #         raise ValidationError('Добавьте ингридиент.')
-    #     for amount_ingridient in value:
-    #         if amount_ingridient['amount'] <= 0:
-    #             raise ValidationError('Колличество должно быть больше 0')
-    #     return value
+    def validate_ingredients(self, value):
+        if not value:
+            raise ValidationError('Добавьте ингридиент.')
+        for amount_ingridient in value:
+            if amount_ingridient['amount'] <= 0:
+                raise ValidationError('Колличество должно быть больше 0')
+        return value
 
     def to_representation(self, instance):
         serializer = RecipeReadSerializer(instance)
