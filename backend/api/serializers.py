@@ -86,10 +86,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                   'image', 'text', 'cooking_time')
 
     def get_ingredients(self, recipe):
-        ingredients = recipe.ingredients.values(
-            'id', 'name', 'measurement_unit', amount=F('recipe__amount')
-        )
-        return ingredients
+        return recipe.ingredients.values('id', 'name', 'measurement_unit', amount=F('recipe__amount'))
+
 
     def get_is_favorited(self, obj):
         user = self.context['request'].user
