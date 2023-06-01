@@ -71,7 +71,7 @@ class IngredientInRecipeCreateSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
-    tags = TagsSerializer(many=True, read_only=True)
+    tags = TagsSerializer(read_only=True)
     author = MyUserSerializer(read_only=True)
     ingredients = IngredientInRecipeCreateSerializer(
         source='recipeingredients', many=True)
@@ -101,8 +101,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = serializers.PrimaryKeyRelatedField(queryset=Tags.objects.all(),
-                                              many=True)
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tags.objects.all())
     author = MyUserSerializer(read_only=True)
     ingredients = AmountIngredientsSerializer(many=True)
     image = Base64ImageField()
