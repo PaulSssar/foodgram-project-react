@@ -26,16 +26,19 @@ class Ingredient(models.Model):
 class Tags(models.Model):
     name = models.CharField(
         'Название',
-        max_length=200
+        max_length=200,
+        unique=True
     )
     color = models.CharField(
         'Цвет',
         max_length=7,
-        null=True
+        null=True,
+        unique=True
     )
     slug = models.SlugField(
         'Слаг',
-        max_length=200
+        max_length=200,
+        unique=True
     )
 
     class Meta:
