@@ -61,7 +61,7 @@ class Recipes(models.Model):
         'Картинка',
         upload_to='uploads/%Y/%m/%d/'
     )
-    description = models.TextField(
+    text = models.TextField(
         'Описание'
     )
     ingredients = models.ManyToManyField(
