@@ -47,6 +47,12 @@ class FollowSerializer(MyUserSerializer):
         read_only_fields = ('email', 'username',
                             'first_name', 'last_name')
 
+    def get_recipes(self, obj):
+        recipes = obj.recipes.all()
+        serializer = ShortRecipeSerializer(recipes, many=True,
+                                           context=self.context)
+        return serializer.data
+
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
