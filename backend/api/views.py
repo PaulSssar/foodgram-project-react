@@ -85,7 +85,7 @@ class RecipeViewSet(viewsets.ModelViewSet,
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     http_method_names = [
-        m for m in viewsets.ModelViewSet.http_method_names if m not in ['put']
+        method for method in viewsets.ModelViewSet.http_method_names if method not in ['put']
     ]
 
     def get_serializer_class(self):
