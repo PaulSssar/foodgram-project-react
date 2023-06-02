@@ -101,28 +101,22 @@ class RecipeViewSet(viewsets.ModelViewSet,
         serializer.save(author=self.request.user)
 
     @action(detail=True,
-            methods=['post', ],
+            methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
-    def add_favorite(self, request, pk):
-        return self.add_recipe(IsFavorite, request, pk)
+    def favorite(self, request, pk):
+        if request.method == 'POST':
+            return self.add_recipe(IsFavorite, request, pk)
+        if request.method == 'DELETE':
+            return self.del_recipe(IsFavorite, request, pk)
 
     @action(detail=True,
-            methods=['delete', ],
+            methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
-    def del_favorite(self, request, pk=None):
-        return self.del_recipe(IsFavorite, request, pk)
-
-    @action(detail=True,
-            methods=['post', ],
-            permission_classes=[IsAuthenticated])
-    def add_shopping_cart(self, request, pk=None):
-        return self.add_recipe(IsInShoppingCartModel, request, pk)
-
-    @action(detail=True,
-            methods=['delete', ],
-            permission_classes=[IsAuthenticated])
-    def del_shopping_cart(self, request, pk=None):
-        return self.del_recipe(IsInShoppingCartModel, request, pk)
+    def shopping_cart(self, request, pk=None):
+        if request.method == 'POST':
+            return self.add_recipe(IsInShoppingCartModel, request, pk)
+        if request.method == 'DELETE':
+            return self.del_recipe(IsInShoppingCartModel, request, pk)
 
     @action(detail=False,
             methods=['get'],
