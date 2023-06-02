@@ -108,6 +108,7 @@ class RecipeViewSet(viewsets.ModelViewSet,
             return self.add_recipe(IsFavorite, request, pk)
         if request.method == 'DELETE':
             return self.del_recipe(IsFavorite, request, pk)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=True,
             methods=['post', 'delete'],
@@ -117,6 +118,7 @@ class RecipeViewSet(viewsets.ModelViewSet,
             return self.add_recipe(IsInShoppingCartModel, request, pk)
         if request.method == 'DELETE':
             return self.del_recipe(IsInShoppingCartModel, request, pk)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=False,
             methods=['get'],
