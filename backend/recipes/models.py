@@ -94,7 +94,6 @@ class Recipes(models.Model):
         verbose_name='Дата публикации',
         auto_now_add=True,
         help_text='Дата публикации',
-        null=True
     )
 
     class Meta:
