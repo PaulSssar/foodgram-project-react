@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from users.models import User
+from users.models import User, Follow
 
 from .filters import NameSearchFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
@@ -34,6 +34,36 @@ class MyUserViewSet(views.UserViewSet):
                                       many=True,
                                       context={'request': request})
         return self.get_paginated_response(serializer.data)
+
+    @action(detail=True,
+            methods=['post', 'delete'],
+            permission_classes=[IsAuthenticated])
+    def subscribe(self, request, id):
+        user = request.user
+        author = get_object_or_404(User, id=id)
+
+        if request.method == 'POST':
+            if user.id == author.id:
+                return Response({'detail': 'Нельзя подписаться на себя'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if Follow.objects.filter(author=author, user=user).exists():
+                return Response({'detail': 'Вы уже подписаны!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            Follow.objects.create(user=user, author=author)
+            serializer = FollowSerializer(author,
+                                          context={'request': request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if request.method == 'DELETE':
+            if not Follow.objects.filter(user=user, author=author).exists():
+                return Response({'errors': 'Вы не подписаны'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            subscription = get_object_or_404(Follow,
+                                             user=user,
+                                             author=author)
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class IngridientViewSet(viewsets.ReadOnlyModelViewSet):
