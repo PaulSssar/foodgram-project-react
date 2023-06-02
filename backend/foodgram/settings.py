@@ -128,16 +128,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DJOSER = {
     'HIDE_USERS': False,
-
     'SERIALIZERS': {
         'user': 'api.serializers.MyUserSerializer',
         'current_user': 'api.serializers.MyUserSerializer',
     },
-
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],
         'user_list': ['rest_framework.permissions.AllowAny'],
         'user_delete': ['rest_framework.permissions.IsAdminUser'],
         'set_username': ['rest_framework.permissions.IsAdminUser'],
     },
+    'LOGIN_FIELD': 'email'
 }
