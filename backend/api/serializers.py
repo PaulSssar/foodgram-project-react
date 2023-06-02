@@ -43,11 +43,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 
-class AmountIngredientsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AmountIngredients
-        fields = ('id', 'amount', 'name', 'measurement_unit')
-
 
 class TagsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,7 +50,7 @@ class TagsSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
-class IngredientInRecipeCreateSerializer(serializers.ModelSerializer):
+class AmountIngredientsSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
