@@ -26,7 +26,7 @@ class MyUserViewSet(views.UserViewSet):
     @action(detail=False,
             methods=['get'],
             permission_classes=[IsAuthenticated])
-    def subscribe(self, request):
+    def subscription(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user)
         page = self.paginate_queryset(queryset)

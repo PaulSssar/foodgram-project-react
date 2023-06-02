@@ -101,4 +101,4 @@ docker-compose down -v --remove-orphans
 
 
 ## Ссылка на проект
-http://51.250.12.162/api
+http://51.250.0.162
