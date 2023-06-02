@@ -43,7 +43,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 
-
 class TagsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tags
