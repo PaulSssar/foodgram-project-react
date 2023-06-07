@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from users.models import Follow, User
 
 from .filters import NameSearchFilter, RecipeFilter
+from .pagination import CustomPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                           MyUserSerializer, RecipeReadSerializer,
@@ -22,6 +23,7 @@ from .serializers import (FollowSerializer, IngredientSerializer,
 class MyUserViewSet(views.UserViewSet):
     queryset = User.objects.all()
     serializer_class = MyUserSerializer
+    pagination_class = CustomPagination
 
     @action(detail=False,
             methods=['get'],
