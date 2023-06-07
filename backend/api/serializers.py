@@ -9,7 +9,7 @@ from users.models import Follow, User
 
 
 class MyUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
