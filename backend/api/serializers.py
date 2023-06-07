@@ -1,5 +1,5 @@
-from djoser.serializers import UserSerializer
 from django.db.models import F
+from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (AmountIngredients, Ingredient, IsFavorite,
                             IsInShoppingCartModel, Recipes, Tags)
@@ -9,7 +9,7 @@ from users.models import Follow, User
 
 
 class MyUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
