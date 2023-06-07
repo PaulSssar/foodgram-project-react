@@ -5,7 +5,7 @@ from recipes.models import (AmountIngredients, Ingredient, IsFavorite,
                             IsInShoppingCartModel, Recipes, Tags)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from users.models import User
+from users.models import Follow, User
 
 
 class MyUserSerializer(UserSerializer):
@@ -28,10 +28,10 @@ class MyUserSerializer(UserSerializer):
         return user
 
     def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
-        return obj.author.filter(subscriber=request.user).exists()
+        return Follow.objects.filter(user=user, author=obj).exists()
 
 
 class FollowSerializer(MyUserSerializer):
@@ -148,9 +148,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def create(self, validated_data):
+        author = self.context.get('request').user
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        recipe = Recipes.objects.create(**validated_data)
+        recipe = Recipes.objects.create(author=author, **validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
             AmountIngredients.objects.create(recipe=recipe,
