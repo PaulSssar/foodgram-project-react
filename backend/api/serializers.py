@@ -5,7 +5,7 @@ from recipes.models import (AmountIngredients, Ingredient, IsFavorite,
                             IsInShoppingCartModel, Recipes, Tags)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from users.models import Follow, User
+from users.models import User
 
 
 class MyUserSerializer(UserSerializer):
@@ -31,7 +31,7 @@ class MyUserSerializer(UserSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return object.author.filter(subscriber=request.user).exists()
+        return obj.author.filter(subscriber=request.user).exists()
 
 
 class FollowSerializer(MyUserSerializer):
