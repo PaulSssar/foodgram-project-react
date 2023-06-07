@@ -1,5 +1,5 @@
-from django.db.models import F
 from djoser.serializers import UserSerializer
+from django.db.models import F
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (AmountIngredients, Ingredient, IsFavorite,
                             IsInShoppingCartModel, Recipes, Tags)
@@ -28,7 +28,7 @@ class MyUserSerializer(UserSerializer):
         return user
 
     def get_is_subscribed(self, obj):
-        user = self.context.user
+        user = self.context.get('request').user
         if user.is_anonymous:
             return False
         return Follow.objects.filter(user=user, author=obj).exists()
