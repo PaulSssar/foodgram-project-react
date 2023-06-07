@@ -66,7 +66,6 @@ class MyUserViewSet(views.UserViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-
 class IngridientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
