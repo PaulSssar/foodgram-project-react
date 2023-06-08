@@ -105,7 +105,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'measurement_unit',
-            quantity=F('recipe__amount'))
+            amount=F('recipe__amount'))
 
     def get_is_favorited(self, obj):
         user = None
