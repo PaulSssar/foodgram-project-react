@@ -105,7 +105,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'measurement_unit',
-            amount=F('recipe__amount'))
+            quantity=F('recipe__amount'))
 
     def get_is_favorited(self, obj):
         user = None
@@ -147,6 +147,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         if not value:
             raise ValidationError('Добавьте ингридиент.')
+        for amount_ingr in value:
+            if amount_ingr['quantity'] <= 0:
+                raise ValidationError('Колличество должно быть больше 0')
         return value
 
     def to_representation(self, instance):
@@ -162,7 +165,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             AmountIngredients.objects.create(recipe=recipe,
                                              ingredient=ingredient.get('id'),
-                                             amount=ingredient.get('amount'))
+                                             amount=ingredient.get('quantity'))
         return recipe
 
     def update(self, instance, validated_data):
@@ -173,11 +176,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         if ingredients is not None:
             instance.ingredients.clear()
             for ingredient in ingredients:
-                amount = ingredient['amount']
+                amount = ingredient['quantity']
                 AmountIngredients.objects.update_or_create(
                     recipe=instance,
                     ingredient=ingredient.get('id'),
-                    defaults={'amount': amount})
+                    defaults={'quantity': amount})
         return super().update(instance, validated_data)
 
 
