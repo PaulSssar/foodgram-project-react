@@ -25,8 +25,6 @@ class MyUserViewSet(views.UserViewSet):
     serializer_class = MyUserSerializer
     pagination_class = CustomPagination
 
-
-
     @action(detail=False,
             methods=['get'],
             permission_classes=[IsAuthenticated])
