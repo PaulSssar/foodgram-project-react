@@ -5,7 +5,7 @@ from recipes.models import (AmountIngredients, Ingredient, IsFavorite,
                             IsInShoppingCartModel, Recipes, Tags)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from users.models import Follow, User
+from users.models import User
 
 
 class MyUserSerializer(UserSerializer):
