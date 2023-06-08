@@ -33,11 +33,6 @@ class MyUserSerializer(UserSerializer):
             return False
         return Follow.objects.filter(user=user, author=obj).exists()
 
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep['context'] = self.context
-        return rep
-
 
 class FollowSerializer(MyUserSerializer):
     recipes_count = serializers.IntegerField(source='recipes.count',
