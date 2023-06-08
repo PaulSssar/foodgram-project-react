@@ -148,7 +148,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         if not value:
             raise ValidationError('Добавьте ингридиент.')
         for amount_ingr in value:
-            if amount_ingr['quantity'] <= 0:
+            if amount_ingr['amount'] <= 0:
                 raise ValidationError('Колличество должно быть больше 0')
         return value
 
@@ -165,7 +165,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             AmountIngredients.objects.create(recipe=recipe,
                                              ingredient=ingredient.get('id'),
-                                             amount=ingredient.get('quantity'))
+                                             amount=ingredient.get('amount'))
         return recipe
 
     def update(self, instance, validated_data):
@@ -176,11 +176,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         if ingredients is not None:
             instance.ingredients.clear()
             for ingredient in ingredients:
-                amount = ingredient['quantity']
+                amount = ingredient['amount']
                 AmountIngredients.objects.update_or_create(
                     recipe=instance,
                     ingredient=ingredient.get('id'),
-                    defaults={'quantity': amount})
+                    defaults={'amount': amount})
         return super().update(instance, validated_data)
 
 
